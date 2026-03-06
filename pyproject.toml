@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atombot"
+version = "0.1.0"
+description = "Atomic-lightweight personal AI assistant"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "python-telegram-bot>=22.0,<23.0",
+]
+
+[project.scripts]
+atombot = "atombot.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["atombot", "atombot.*"]
+
+[tool.setuptools.package-data]
+atombot = ["prompts/AGENTS.md", "prompts/MEMORY.md", "skills/*/SKILL.md"]
