@@ -41,7 +41,7 @@ class LocalTools:
         p = self._resolve(path)
         if not p.exists(): return f"ERROR: file not found: {path}"
         if p.is_dir(): return f"ERROR: not a file: {path}"
-        return p.read_text(encoding="utf-8")[:50000]
+        return p.read_text(encoding="utf-8")[:10000]
 
     def write_file(self, path: str, content: str) -> str:
         p = self._resolve(path); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(content, encoding="utf-8")
@@ -65,14 +65,14 @@ class LocalTools:
             p = subprocess.run(argv, shell=False, cwd=str(self.workspace), capture_output=True, text=True, timeout=t)
         except subprocess.TimeoutExpired:
             return f"ERROR: command timed out after {t}s"
-        out, err = (p.stdout or "").strip()[:12000], (p.stderr or "").strip()[:12000]
+        out, err = (p.stdout or "").strip()[:10000], (p.stderr or "").strip()[:10000]
         return "\n".join([f"exit={p.returncode}"] + ([f"stdout:\n{out}"] if out else []) + ([f"stderr:\n{err}"] if err else []))
 
     def web_fetch(self, url: str, max_chars: int | None = None) -> str:
         if not (u := (url or "").strip()): return "ERROR: url is empty"
         p = urlparse(u)
         if p.scheme not in {"http", "https"} or not p.netloc: return "ERROR: url must be http/https"
-        n = max(200, min(int(max_chars or 12000), 50000))
+        n = min(int(max_chars or 20000), 20000)
         try:
             with urlopen(Request(u, headers={"User-Agent": "atombot/1.0"}), timeout=15) as r:
                 text = r.read(n * 3).decode("utf-8", errors="ignore")
